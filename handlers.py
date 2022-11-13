@@ -21,14 +21,14 @@ def unsupported_media_type(handler, content_type_header):
 
 
 def get_json(handler):
-    inky_display = auto()
+    display = handler.display_output
     handler.send_response(200)
     handler.send_header('Content-Type', 'application/json')
     handler.end_headers()
     json_str = json.dumps({
-        "type": inky_display.colour,
-        "width": inky_display.WIDTH,
-        "height": inky_display.height,
+        "type": display.colour,
+        "width": display.WIDTH,
+        "height": display.HEIGHT,
         "uploadLink": handler.path,
     })
     handler.wfile.write(json_str.encode(encoding='utf_8'))
