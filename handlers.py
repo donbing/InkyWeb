@@ -1,4 +1,4 @@
-from inky.auto import auto
+
 from http.server import BaseHTTPRequestHandler
 from PIL import Image
 import io
@@ -55,18 +55,20 @@ def display_uploaded_image(handler):
     pdict['boundary'] = bytes(pdict['boundary'], "utf-8")
 
     if(content_type == 'multipart/form-data'):
-        inky_display = auto()
         fields = cgi.parse_multipart(handler.rfile, pdict)
         image = Image.open(io.BytesIO(fields['image_file'][0]), mode='r')
-        image = image.resize((inky_display.WIDTH, inky_display.HEIGHT))
-        inky_display.set_image(quantise_inky(image))
-        inky_display.show()
+        image = image.resize((handler.display_output.WIDTH, handler.display_output.HEIGHT))
+
+        handler.display_output.show(image)
         handler.send_response(200)
     else:
         unsupported_media_type(handler)
 
 
 class InkyHandler(BaseHTTPRequestHandler):
+    def __init__(self, display_output, *args, **kwargs):
+        self.display_output = display_output
+        super().__init__(*args, **kwargs)
 
     def do_GET(self):
         content_type_header = self.headers.get('accept')

@@ -4,8 +4,14 @@ import unittest
 from http.server import HTTPServer
 from urllib import request
 from handlers import InkyHandler
+from functools import partial
 
-
+class FakeOutput():
+    def __init__(self):
+        self.WIDTH = 400
+        self.HEIGHT = 300
+    def show(self, image):
+        self.last_image = image
 class TestRequests(unittest.TestCase):
 
     def setUp(self):
@@ -15,7 +21,9 @@ class TestRequests(unittest.TestCase):
         self.start_server()
 
     def start_server(self):
-        self.server = HTTPServer((self.host, self.port), InkyHandler)
+        o = FakeOutput()
+        partial_handler = partial(InkyHandler, o)
+        self.server = HTTPServer((self.host, self.port), partial_handler)
         self.server_thread = threading.Thread(target=self.server.serve_forever)
         self.server_thread.daemon = True
         self.server_thread.start()
