@@ -24,8 +24,8 @@ class TestRequests(unittest.TestCase):
         self.start_server()
 
     def start_server(self):
-        self.o = FakeOutput()
-        partial_handler = partial(InkyHandler, o)
+        self.output = FakeOutput()
+        partial_handler = partial(InkyHandler, self.output)
         self.server = HTTPServer((self.host, self.port), partial_handler)
         self.server_thread = threading.Thread(target=self.server.serve_forever)
         self.server_thread.daemon = True
