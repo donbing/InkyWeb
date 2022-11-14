@@ -44,7 +44,7 @@ jobs:
         with:
           context: .
           load: true
-          file: scripts/docker/dockerfile
+          file: dockerfile
           tags:  ${{ env.TEST_TAG }}
 
       - name: Run test image
