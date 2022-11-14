@@ -6,12 +6,15 @@ from urllib import request
 from handlers import InkyHandler
 from functools import partial
 
+
 class FakeOutput():
     def __init__(self):
         self.WIDTH = 400
         self.HEIGHT = 300
     def show(self, image):
         self.last_image = image
+
+
 class TestRequests(unittest.TestCase):
 
     def setUp(self):
@@ -21,7 +24,7 @@ class TestRequests(unittest.TestCase):
         self.start_server()
 
     def start_server(self):
-        o = FakeOutput()
+        self.o = FakeOutput()
         partial_handler = partial(InkyHandler, o)
         self.server = HTTPServer((self.host, self.port), partial_handler)
         self.server_thread = threading.Thread(target=self.server.serve_forever)
@@ -40,6 +43,12 @@ class TestRequests(unittest.TestCase):
 
     def test_get(self):
         req = request.Request(f"http://localhost:{self.port}/")
+        req.add_header('accept', 'application/json')
+        response = request.urlopen(req).read()
+        print(response)
+    
+    def test_post(self):
+        req = request.Request(f"http://localhost:{self.port}/", method='POST')
         req.add_header('accept', 'application/json')
         response = request.urlopen(req).read()
         print(response)
